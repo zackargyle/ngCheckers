@@ -66,7 +66,7 @@ angular.module('ngCheckers', [])
       } else if (square.player === $scope.player) {
         selectedSquare = square;
         resetChoices();
-        setChoices(selectedSquare.x, selectedSquare.y, 1, []);
+        setChoices(selectedSquare.x, selectedSquare.y, 1, [],-1,-1);
       } else {
         selectedSquare = null;
       }
@@ -130,7 +130,7 @@ angular.module('ngCheckers', [])
       }
     }
 
-    function setChoices(x, y, depth, matados) {
+    function setChoices(x, y, depth, matados, oldX, oldY) {
       if (depth > 10) return;
       
       // Upper Choices
@@ -140,14 +140,15 @@ angular.module('ngCheckers', [])
           var UP_LEFT = $scope.board[y-1][x-1];
           if (UP_LEFT.player) {
             if (UP_LEFT.player !== $scope.player) {
-              if (x > 1 && y > 1) {
+              if ((x > 1 && y > 1) && !(x - 2 === oldX && y - 2 === oldY)) {
                 var UP_LEFT_2 = $scope.board[y-2][x-2];
                 if (!UP_LEFT_2.player) {
                   UP_LEFT_2.isChoice = true;
                   var jumpers = matados.slice(0);
-                  jumpers.push(UP_LEFT);
+                  if (jumpers.indexOf(UP_LEFT) === -1)
+                    jumpers.push(UP_LEFT);
                   UP_LEFT_2.matados = jumpers;
-                  setChoices(x-2,y-2,depth+1,jumpers);
+                  setChoices(x-2,y-2,depth+1,jumpers,x,y);
                 }
               }
             }
@@ -161,14 +162,15 @@ angular.module('ngCheckers', [])
           var UP_RIGHT = $scope.board[y-1][x+1];
           if (UP_RIGHT.player) {
             if (UP_RIGHT.player !== $scope.player) {
-              if (x < BOARD_WIDTH - 2 && y > 1) {
+              if ((x < BOARD_WIDTH - 2 && y > 1) && !(x + 2 === oldX && y - 2 === oldY)) {
                 var UP_RIGHT_2 = $scope.board[y-2][x+2];
                 if (!UP_RIGHT_2.player) {
                   UP_RIGHT_2.isChoice = true;
                   var jumpers = matados.slice(0);
-                  jumpers.push(UP_RIGHT);
+                  if (jumpers.indexOf(UP_RIGHT) === -1)
+                    jumpers.push(UP_RIGHT);
                   UP_RIGHT_2.matados = jumpers;
-                  setChoices(x+2,y-2,depth+1,jumpers);
+                  setChoices(x+2,y-2,depth+1,jumpers,x,y);
                 }
               }
             }
@@ -185,14 +187,15 @@ angular.module('ngCheckers', [])
           var LOWER_LEFT = $scope.board[y+1][x-1];
           if (LOWER_LEFT.player) {
             if (LOWER_LEFT.player !== $scope.player) {
-              if (x > 1 && y < BOARD_WIDTH - 2) {
+              if ((x > 1 && y < BOARD_WIDTH - 2) && !(x - 2 === oldX && y + 2 === oldY)) {
                 var LOWER_LEFT_2 = $scope.board[y+2][x-2];
                 if (!LOWER_LEFT_2.player) {
                   LOWER_LEFT_2.isChoice = true;
                   var jumpers = matados.slice(0);
-                  jumpers.push(LOWER_LEFT);
+                  if (jumpers.indexOf(LOWER_LEFT) === -1)
+                    jumpers.push(LOWER_LEFT);
                   LOWER_LEFT_2.matados = jumpers;
-                  setChoices(x-2,y+2,depth+1,jumpers);
+                  setChoices(x-2,y+2,depth+1,jumpers,x,y);
                 }
               }
             }
@@ -206,14 +209,15 @@ angular.module('ngCheckers', [])
           var LOWER_RIGHT = $scope.board[y+1][x+1];
           if (LOWER_RIGHT.player) {
             if (LOWER_RIGHT.player !== $scope.player) {
-              if (x < BOARD_WIDTH - 2 && y < BOARD_WIDTH - 2) {
+              if ((x < BOARD_WIDTH - 2 && y < BOARD_WIDTH - 2) && !(x + 2 === oldX && y + 2 === oldY)) {
                 var LOWER_RIGHT_2 = $scope.board[y+2][x+2];
                 if (!LOWER_RIGHT_2.player) {
                   LOWER_RIGHT_2.isChoice = true;
                   var jumpers = matados.slice(0);
-                  jumpers.push(LOWER_RIGHT);
+                  if (jumpers.indexOf(LOWER_RIGHT) === -1)
+                    jumpers.push(LOWER_RIGHT);
                   LOWER_RIGHT_2.matados = jumpers;
-                  setChoices(x+2,y+2,depth+1,jumpers);
+                  setChoices(x+2,y+2,depth+1,jumpers,x,y);
                 }
               }
             }

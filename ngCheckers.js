@@ -129,6 +129,8 @@ angular.module('ngCheckers', [])
     }
 
     function setChoices(x, y, depth, matados) {
+      if (depth > 10) return;
+      
       // Upper Choices
       if ($scope.player === RED || selectedSquare.isKing) {
         // Upper Left

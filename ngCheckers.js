@@ -70,6 +70,7 @@ angular.module('ngCheckers', [])
       } else {
         selectedSquare = null;
       }
+      console.log($scope.board);
     }
 
     function resetChoices() {
@@ -110,6 +111,7 @@ angular.module('ngCheckers', [])
 
     function jump(jumped) {
       jumped.player = null;
+      jumped.isKing = false;
       if ($scope.player === RED) {
         $scope.redScore++;
         if ($scope.redScore === 8) {
@@ -137,14 +139,16 @@ angular.module('ngCheckers', [])
         if (x > 0 && y > 0) {
           var UP_LEFT = $scope.board[y-1][x-1];
           if (UP_LEFT.player) {
-            if (x > 1 && y > 1) {
-              var UP_LEFT_2 = $scope.board[y-2][x-2];
-              if (!UP_LEFT_2.player) {
-                UP_LEFT_2.isChoice = true;
-                var jumpers = matados.slice(0);
-                jumpers.push(UP_LEFT);
-                UP_LEFT_2.matados = jumpers;
-                setChoices(x-2,y-2,depth+1,jumpers);
+            if (UP_LEFT.player !== $scope.player) {
+              if (x > 1 && y > 1) {
+                var UP_LEFT_2 = $scope.board[y-2][x-2];
+                if (!UP_LEFT_2.player) {
+                  UP_LEFT_2.isChoice = true;
+                  var jumpers = matados.slice(0);
+                  jumpers.push(UP_LEFT);
+                  UP_LEFT_2.matados = jumpers;
+                  setChoices(x-2,y-2,depth+1,jumpers);
+                }
               }
             }
           } else if (depth === 1) {
@@ -156,14 +160,16 @@ angular.module('ngCheckers', [])
         if (x < BOARD_WIDTH - 1 && y > 0) {
           var UP_RIGHT = $scope.board[y-1][x+1];
           if (UP_RIGHT.player) {
-            if (x < BOARD_WIDTH - 2 && y > 1) {
-              var UP_RIGHT_2 = $scope.board[y-2][x+2];
-              if (!UP_RIGHT_2.player) {
-                UP_RIGHT_2.isChoice = true;
-                var jumpers = matados.slice(0);
-                jumpers.push(UP_RIGHT);
-                UP_RIGHT_2.matados = jumpers;
-                setChoices(x+2,y-2,depth+1,jumpers);
+            if (UP_RIGHT.player !== $scope.player) {
+              if (x < BOARD_WIDTH - 2 && y > 1) {
+                var UP_RIGHT_2 = $scope.board[y-2][x+2];
+                if (!UP_RIGHT_2.player) {
+                  UP_RIGHT_2.isChoice = true;
+                  var jumpers = matados.slice(0);
+                  jumpers.push(UP_RIGHT);
+                  UP_RIGHT_2.matados = jumpers;
+                  setChoices(x+2,y-2,depth+1,jumpers);
+                }
               }
             }
           } else if (depth === 1) {
@@ -178,14 +184,16 @@ angular.module('ngCheckers', [])
         if (x > 0 && y < BOARD_WIDTH - 1) {
           var LOWER_LEFT = $scope.board[y+1][x-1];
           if (LOWER_LEFT.player) {
-            if (x > 1 && y < BOARD_WIDTH - 2) {
-              var LOWER_LEFT_2 = $scope.board[y+2][x-2];
-              if (!LOWER_LEFT_2.player) {
-                LOWER_LEFT_2.isChoice = true;
-                var jumpers = matados.slice(0);
-                jumpers.push(LOWER_LEFT);
-                LOWER_LEFT_2.matados = jumpers;
-                setChoices(x-2,y+2,depth+1,jumpers);
+            if (LOWER_LEFT.player !== $scope.player) {
+              if (x > 1 && y < BOARD_WIDTH - 2) {
+                var LOWER_LEFT_2 = $scope.board[y+2][x-2];
+                if (!LOWER_LEFT_2.player) {
+                  LOWER_LEFT_2.isChoice = true;
+                  var jumpers = matados.slice(0);
+                  jumpers.push(LOWER_LEFT);
+                  LOWER_LEFT_2.matados = jumpers;
+                  setChoices(x-2,y+2,depth+1,jumpers);
+                }
               }
             }
           } else if (depth === 1) {
@@ -197,14 +205,16 @@ angular.module('ngCheckers', [])
         if (x < BOARD_WIDTH - 1 && y < BOARD_WIDTH - 1) {
           var LOWER_RIGHT = $scope.board[y+1][x+1];
           if (LOWER_RIGHT.player) {
-            if (x < BOARD_WIDTH - 2 && y < BOARD_WIDTH - 2) {
-              var LOWER_RIGHT_2 = $scope.board[y+2][x+2];
-              if (!LOWER_RIGHT_2.player) {
-                LOWER_RIGHT_2.isChoice = true;
-                var jumpers = matados.slice(0);
-                jumpers.push(LOWER_RIGHT);
-                LOWER_RIGHT_2.matados = jumpers;
-                setChoices(x+2,y+2,depth+1,jumpers);
+            if (LOWER_RIGHT.player !== $scope.player) {
+              if (x < BOARD_WIDTH - 2 && y < BOARD_WIDTH - 2) {
+                var LOWER_RIGHT_2 = $scope.board[y+2][x+2];
+                if (!LOWER_RIGHT_2.player) {
+                  LOWER_RIGHT_2.isChoice = true;
+                  var jumpers = matados.slice(0);
+                  jumpers.push(LOWER_RIGHT);
+                  LOWER_RIGHT_2.matados = jumpers;
+                  setChoices(x+2,y+2,depth+1,jumpers);
+                }
               }
             }
           } else if (depth === 1) {

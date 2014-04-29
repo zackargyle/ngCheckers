@@ -63,7 +63,6 @@ angular.module('ngCheckers', [])
       if (selectedSquare !== null && !square.player) {
         movePiece(square);
         resetChoices();
-
       } else if (square.player === $scope.player) {
         selectedSquare = square;
         resetChoices();
@@ -93,6 +92,7 @@ angular.module('ngCheckers', [])
         square.player = selectedSquare.player;
         square.isKing = selectedSquare.isKing || isKing(square);
         selectedSquare.player = null;
+        selectedSquare.isKing = false;
         $scope.player = $scope.player === RED ? BLACK : RED;
       }
     }

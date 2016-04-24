@@ -66,7 +66,7 @@ angular.module('ngCheckers', [])
       } else if (square.player === $scope.player) {
         selectedSquare = square;
         resetChoices();
-        setChoices(selectedSquare.x, selectedSquare.y, 1, [],-1,-1);
+        setChoices(selectedSquare.x, selectedSquare.y, 1, [],-1,-1,selectedSquare.isKing);
       } else {
         selectedSquare = null;
       }
@@ -85,13 +85,16 @@ angular.module('ngCheckers', [])
 
     function movePiece(square) {
       if (square.isChoice) {
+        var becomeKing = selectedSquare.isKing;
         // Jump dude
         for (var i = 0; i < square.matados.length; i++) {
-          jump(square.matados[i]);
+          var matado = square.matados[i];
+          jump(matado);
+          becomeKing = becomeKing || becomeKingAfterJump(matado.x, matado.y);
         }
 
         square.player = selectedSquare.player;
-        square.isKing = selectedSquare.isKing || isKing(square);
+        square.isKing = becomeKing || isKing(square);
         selectedSquare.player = null;
         selectedSquare.isKing = false;
         $scope.player = $scope.player === RED ? BLACK : RED;
@@ -107,6 +110,11 @@ angular.module('ngCheckers', [])
           return true;
       }
       return false;
+    }
+
+    function becomeKingAfterJump(x, y){
+      return ($scope.player === RED && y == 1) ||
+             ($scope.player === BLACK && y == BOARD_WIDTH - 2);
     }
 
     function jump(jumped) {
@@ -130,11 +138,14 @@ angular.module('ngCheckers', [])
       }
     }
 
-    function setChoices(x, y, depth, matados, oldX, oldY) {
+    function setChoices(x, y, depth, matados, oldX, oldY, isKing) {
       if (depth > 10) return;
-      
+      isKing = 
+          isKing || 
+          ($scope.player === RED && y == 0) || 
+          ($scope.player === BLACK && y == BOARD_WIDTH - 1);
       // Upper Choices
-      if ($scope.player === RED || selectedSquare.isKing) {
+      if ($scope.player === RED || isKing) {
         // Upper Left
         if (x > 0 && y > 0) {
           var UP_LEFT = $scope.board[y-1][x-1];
@@ -148,7 +159,7 @@ angular.module('ngCheckers', [])
                   if (jumpers.indexOf(UP_LEFT) === -1)
                     jumpers.push(UP_LEFT);
                   UP_LEFT_2.matados = jumpers;
-                  setChoices(x-2,y-2,depth+1,jumpers,x,y);
+                  setChoices(x-2,y-2,depth+1,jumpers,x,y, isKing);
                 }
               }
             }
@@ -170,7 +181,7 @@ angular.module('ngCheckers', [])
                   if (jumpers.indexOf(UP_RIGHT) === -1)
                     jumpers.push(UP_RIGHT);
                   UP_RIGHT_2.matados = jumpers;
-                  setChoices(x+2,y-2,depth+1,jumpers,x,y);
+                  setChoices(x+2,y-2,depth+1,jumpers,x,y, isKing);
                 }
               }
             }
@@ -181,7 +192,7 @@ angular.module('ngCheckers', [])
       }
 
       // Lower Choices
-      if ($scope.player === BLACK || selectedSquare.isKing) {
+      if ($scope.player === BLACK || isKing) {
         // Lower Left
         if (x > 0 && y < BOARD_WIDTH - 1) {
           var LOWER_LEFT = $scope.board[y+1][x-1];
@@ -195,7 +206,7 @@ angular.module('ngCheckers', [])
                   if (jumpers.indexOf(LOWER_LEFT) === -1)
                     jumpers.push(LOWER_LEFT);
                   LOWER_LEFT_2.matados = jumpers;
-                  setChoices(x-2,y+2,depth+1,jumpers,x,y);
+                  setChoices(x-2,y+2,depth+1,jumpers,x,y,isKing);
                 }
               }
             }
@@ -217,7 +228,7 @@ angular.module('ngCheckers', [])
                   if (jumpers.indexOf(LOWER_RIGHT) === -1)
                     jumpers.push(LOWER_RIGHT);
                   LOWER_RIGHT_2.matados = jumpers;
-                  setChoices(x+2,y+2,depth+1,jumpers,x,y);
+                  setChoices(x+2,y+2,depth+1,jumpers,x,y,isKing);
                 }
               }
             }
